@@ -16,14 +16,14 @@ namespace WebPush;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class StatusReport
+class StatusReport implements StatusReportInterface
 {
-    private Subscription $subscription;
-    private Notification $notification;
+    private SubscriptionInterface $subscription;
+    private NotificationInterface $notification;
     private RequestInterface $request;
     private ResponseInterface $response;
 
-    public function __construct(Subscription $subscription, Notification $notification, RequestInterface $request, ResponseInterface $response)
+    public function __construct(SubscriptionInterface $subscription, NotificationInterface $notification, RequestInterface $request, ResponseInterface $response)
     {
         $this->subscription = $subscription;
         $this->notification = $notification;
@@ -31,21 +31,27 @@ class StatusReport
         $this->response = $response;
     }
 
-    public function getSubscription(): Subscription
+    public function getSubscription(): SubscriptionInterface
     {
         return $this->subscription;
     }
 
-    public function getNotification(): Notification
+    public function getNotification(): NotificationInterface
     {
         return $this->notification;
     }
 
+    /**
+     * @deprecated Will be removed in v2.0. No replacement
+     */
     public function getRequest(): RequestInterface
     {
         return $this->request;
     }
 
+    /**
+     * @deprecated Will be removed in v2.0. No replacement
+     */
     public function getResponse(): ResponseInterface
     {
         return $this->response;
@@ -58,11 +64,19 @@ class StatusReport
         return $code >= 200 && $code < 300;
     }
 
-    public function notificationExpired(): bool
+    public function isSubscriptionExpired(): bool
     {
         $code = $this->response->getStatusCode();
 
         return 404 === $code || 410 === $code;
+    }
+
+    /**
+     * @deprecated The method is deprecated. Please use isSubscriptionExpired() instead
+     */
+    public function notificationExpired(): bool
+    {
+        return $this->isSubscriptionExpired();
     }
 
     public function getLocation(): string

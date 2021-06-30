@@ -45,7 +45,7 @@ class WebPush implements WebPushService, Loggable
         return $this;
     }
 
-    public function send(Notification $notification, Subscription $subscription): StatusReport
+    public function send(NotificationInterface $notification, SubscriptionInterface $subscription): StatusReportInterface
     {
         $this->logger->debug('Sending notification', ['notification' => $notification, 'subscription' => $subscription]);
         $request = $this->requestFactory->createRequest('POST', $subscription->getEndpoint());
